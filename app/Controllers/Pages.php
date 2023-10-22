@@ -8,12 +8,9 @@ class Pages extends BaseController
     {
         $data = [
             'title' => 'Home | Riyan Darmawan',
-            'tes' => ['satu', 'dua', 'tiga']
         ];
 
-        echo view('layout/header', $data);
-        echo view('pages/home');
-        echo view('layout/footer');
+        return view('pages/home', $data);
     }
 
     public function about()
@@ -22,8 +19,28 @@ class Pages extends BaseController
             'title' => 'About Me'
         ];
 
-        echo view('layout/header', $data);
-        return view('pages/about');
-        echo view('layout/footer');
+        return view('pages/about', $data);
+    }
+
+    public function contact()
+    {
+        $data = [
+            'title' => 'Contact Us',
+            'alamat' => [
+                [
+                    'tipe' => 'Rumah',
+                    'alamat' => 'Jl. hij No. 25',
+                    'kota' => 'Bandung'
+                ],
+
+                [
+                    'tipe' => 'Kantor',
+                    'alamat' => 'Jl. Pertama No. 15',
+                    'kota' => 'Bandung'
+                ]
+            ]
+        ];
+
+        return view('pages/contact', $data);
     }
 }
