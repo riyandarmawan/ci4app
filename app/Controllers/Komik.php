@@ -44,7 +44,7 @@ class Komik extends BaseController
 
         // jika komik tidak ada di tabel
         if (empty($data['komik'])) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Judul komik ' . $slug . 'tidak ditemukan');
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Judul komik ' . $slug . ' tidak ditemukan');
         }
 
         return view('komik/detail', $data);
@@ -70,14 +70,38 @@ class Komik extends BaseController
                     'required' => '{field} komik harus diisi!',
                     'is_unique' => '{field} komik sudah terdaftar!'
                 ]
-            ]
+            ],
+            'penulis' => [
+                'rules' => 'required|is_unique[komik.penulis]',
+                'errors' => [
+                    'required' => '{field} komik harus diisi!',
+                    'is_unique' => '{field} komik sudah terdaftar!'
+                ]
+            ],
+            'penerbit' => [
+                'rules' => 'required|is_unique[komik.penerbit]',
+                'errors' => [
+                    'required' => '{field} komik harus diisi!',
+                    'is_unique' => '{field} komik sudah terdaftar!'
+                ]
+            ],
+            'sampul' => [
+                'rules' => 'required|is_unique[komik.sampul]',
+                'errors' => [
+                    'required' => '{field} komik harus diisi!',
+                    'is_unique' => '{field} komik sudah terdaftar!'
+                ]
+            ],
         ])) {
             $validation = \Config\Services::validation();
             
-            session()->setFlashdata('error', $validation->listErrors());
+            session()->setFlashdata('judul', $validation->getError('judul'));
+            session()->setFlashdata('penulis', $validation->getError('penulis'));
+            session()->setFlashdata('penerbit', $validation->getError('penerbit'));
+            session()->setFlashdata('sampul', $validation->getError('penulis'));
 
             return redirect()->to('/komik/create')->withInput();
-        }
+        }   
 
         // $this->request->getVar();
 
@@ -93,6 +117,110 @@ class Komik extends BaseController
 
         session()->setFlashdata('pesan', 'Data berhasil ditambahkan!');
 
-        return redirect()->to('/komik');
+        return redirect()->to(base_url() . '/komik');
+    }
+
+    public function delete($id)
+    {
+        $this->komikModel->delete($id);
+
+        session()->setFlashdata('pesan', 'Data berhasil dihapus!');
+
+        return redirect()->to(base_url() . '/komik');
+    }
+
+    public function edit($slug)
+    {
+        $data = [
+            'title' => 'Form Ubah Data Komik',
+            'validation' => \Config\Services::validation(),
+            'komik' => $this->komikModel->getKomik($slug)
+        ];
+
+        return view('/komik/edit', $data);
+    }
+
+    public function update($id)
+    {
+        // cek judul
+        $komikLama = $this->komikModel->getKomik($this->request->getVar('slug'));
+        if($komikLama['judul'] == $this->request->getVar('judul')) {
+            $ruleJudul = 'required';
+        } else {
+            $ruleJudul = 'required|is_unique[komik.judul]';
+        }
+
+        if($komikLama['penulis'] == $this->request->getVar('penulis')) {
+            $rulePenulis = 'required';
+        } else {
+            $rulePenulis = 'required|is_unique[komik.penulis]';
+        }
+
+        if($komikLama['penerbit'] == $this->request->getVar('penerbit')) {
+            $rulePenerbit = 'required';
+        } else {
+            $rulePenerbit = 'required|is_unique[komik.penerbit]';
+        }
+
+        if($komikLama['sampul'] == $this->request->getVar('sampul')) {
+            $ruleSampul = 'required';
+        } else {
+            $ruleSampul = 'required|is_unique[komik.sampul]';
+        }
+
+        if(!$this->validate([
+            'judul' => [
+                'rules' => $ruleJudul,
+                'errors' => [
+                    'required' => '{field} komik harus diisi!',
+                    'is_unique' => '{field} komik sudah terdaftar!'
+                ]
+            ],
+            'penulis' => [
+                'rules' => $rulePenulis,
+                'errors' => [
+                    'required' => '{field} komik harus diisi!',
+                    'is_unique' => '{field} komik sudah terdaftar!'
+                ]
+            ],
+            'penerbit' => [
+                'rules' => $rulePenerbit,
+                'errors' => [
+                    'required' => '{field} komik harus diisi!',
+                    'is_unique' => '{field} komik sudah terdaftar!'
+                ]
+            ],
+            'sampul' => [
+                'rules' => $ruleSampul,
+                'errors' => [
+                    'required' => '{field} komik harus diisi!',
+                    'is_unique' => '{field} komik sudah terdaftar!'
+                ]
+            ],
+        ])) {
+            $validation = \Config\Services::validation();
+            
+            session()->setFlashdata('judul', $validation->getError('judul'));
+            session()->setFlashdata('penulis', $validation->getError('penulis'));
+            session()->setFlashdata('penerbit', $validation->getError('penerbit'));
+            session()->setFlashdata('sampul', $validation->getError('penulis'));
+
+            return redirect()->to(base_url() .'/komik/edit/'. $this->request->getVar('slug'))->withInput();
+        }
+
+        $slug = url_title($this->request->getVar('judul'), '-', 'true');
+
+        $this->komikModel->save([
+            'id' => $id,
+            'judul' => $this->request->getVar('judul'),
+            'slug' => $slug,
+            'penulis' => $this->request->getVar('penulis'),
+            'penerbit' => $this->request->getVar('penerbit'),
+            'sampul' => $this->request->getVar('sampul')
+        ]);
+
+        session()->setFlashdata('pesan', 'Data berhasil diubah!');
+
+        return redirect()->to(base_url() . '/komik');
     }
 }
