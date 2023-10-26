@@ -5,3 +5,17 @@
 .sampul {
     width: 80px;
 }
+
+.container .tombol-label {
+    cursor: pointer;
+}
+
+.container .tombol-cari {
+    width: 80px;
+    background-color: darkgray;
+    color: black;
+}
+
+.container .tombol-cari:hover {
+    background-color: gray;
+}
