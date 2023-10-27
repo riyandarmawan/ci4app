@@ -46,7 +46,7 @@
                         <div class="mb-3 position-relative container">
                             <input class="form-control <?= (session()->getFlashdata('sampul') ? 'is-invalid' : ''); ?> d-none" type="file" id="sampul" name="sampul" onchange="previewImg()">
                             <label for="sampul" class="form-control pe-auto tombol-label" title="Pilih gambar..."><?= $komik['sampul']; ?></label>
-                            <label for="sampul" class="btn btn-secondary position-absolute end-0 top-0 tombol-cari" title="Pilih gambar...">Cari</label>
+                            <label for="sampul" class="btn btn-secondary position-absolute end-0 top-0 tombol-cari" title="Pilih gambar...">Browse</label>
                             <div class="invalid-feedback">
                                 <?= session()->getFlashdata('sampul'); ?>
                             </div>
