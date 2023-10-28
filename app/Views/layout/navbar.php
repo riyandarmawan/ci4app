@@ -23,5 +23,10 @@
                 </li>
             </ul>
         </div>
+        <?php if (logged_in()) : ?>
+            <a class="btn btn-success" href="/logout">Logout</a>
+        <?php else : ?>
+            <a class="btn btn-success" href="/login">Login</a>
+        <?php endif; ?>
     </div>
 </nav>
